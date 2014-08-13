@@ -28,17 +28,19 @@
 
 ## bindEvents()
 
-## blur(pubInst)
+## blur(pubInst, event)
 
 ### Params: 
 
-* **** *pubInst*       @param {Object} event
+* **Object** *pubInst* 
+* **Object** *event* 
 
-## focus(pubInst)
+## focus(pubInst, event)
 
 ### Params: 
 
-* **** *pubInst*       @param {Object} event
+* **** *pubInst* 
+* **Object** *event* 
 
 ## keyDown(event)
 
