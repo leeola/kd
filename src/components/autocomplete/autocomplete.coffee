@@ -22,7 +22,7 @@ module.exports = class KDAutoComplete extends KDInputView
     @$input().data "data-id",@getId()
 
   ###*
-    @param {} value
+   * @param {} value
   ###
   setDefaultValue:(value) ->
     @inputDefaultValue = value
@@ -35,7 +35,7 @@ module.exports = class KDAutoComplete extends KDInputView
   ###
   getValue:-> @$input().val()
   ###*
-    @param {} value
+   * @param {} value
   ###
   setValue:(value)-> @$input().val(value)
 
@@ -49,8 +49,8 @@ module.exports = class KDAutoComplete extends KDInputView
   # KDAutoCompleteListItemViewClick and that breaks mouse selection
   # on autocomplete list
   ###*
-    @param {} pubInst
-    @param {Object} event
+   * @param {Object} pubInst
+   * @param {Object} event
   ###
   blur:(pubInst,event)->
     @unsetClass "focus"
@@ -60,15 +60,15 @@ module.exports = class KDAutoComplete extends KDInputView
     yes
 
   ###*
-    @param {} pubInst
-    @param {Object} event
+   * @param {} pubInst
+   * @param {Object} event
   ###
   focus:(pubInst,event)->
     @setClass "focus"
     super
 
   ###*
-    @param {Object} event
+   * @param {Object} event
   ###
   keyDown:(event)->
     (KD.getSingleton "windowController").setKeyView @
@@ -87,7 +87,7 @@ module.exports = class KDAutoComplete extends KDInputView
     @dropdown = null
 
   ###*
-    @param {} value
+   * @param {} value
   ###
   setPlaceHolder:(value)->
     @$input()[0].setAttribute "placeholder", value

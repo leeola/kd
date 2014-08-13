@@ -6,7 +6,13 @@ KDAutoComplete             = require './autocomplete.coffee'
 KDAutoCompleteListView     = require './autocompletelist.coffee'
 KDAutoCompleteFetchingItem = require './autocompletefetchingitem.coffee'
 
+###*
+###
 module.exports = class KDAutoCompleteController extends KDViewController
+  ###*
+   * @param {Object} options
+   * @param {Object} data
+  ###
   constructor:(options = {},data)->
     options = $.extend
       view                  : mainView = options.view or new KDAutoComplete
@@ -38,11 +44,16 @@ module.exports = class KDAutoCompleteController extends KDViewController
     @selectedItemCounter = 0
     @readyToShowDropDown = yes
 
+  ###*
+  ###
   reset:->
     subViews = @itemWrapper.getSubViews().slice()
     for item in subViews
       @removeFromSubmitQueue item
 
+  ###*
+   * @param {KDView} mainView
+  ###
   loadView:(mainView)->
     @createDropDown()
     @getAutoCompletedItemParent()
@@ -51,12 +62,18 @@ module.exports = class KDAutoCompleteController extends KDViewController
     mainView.on 'keyup', @utils.debounce 300, (@bound "keyUpOnInputView")
     mainView.on 'keydown', (event)=> @keyDownOnInputView event
 
+  ###*
+   * @param {Array} defaultItems
+  ###
   setDefaultValue:(defaultItems)->
     {defaultValue, itemDataPath} = @getOptions()
     defaultItems or= defaultValue
     for item in defaultItems
       @addItemToSubmitQueue @getView(), item
 
+  ###*
+   * @param {Object} event
+  ###
   keyDownOnInputView:(event)->
 
     autoCompleteView = @getView()
@@ -92,12 +109,17 @@ module.exports = class KDAutoCompleteController extends KDViewController
         @readyToShowDropDown = yes
     no
 
+  ###*
+  ###
   getPrefix:->
     separator = @getOptions().separator
     items = @getView().getValue().split separator
     prefix = items[items.length-1]
     prefix
 
+  ###*
+   * @param {Array} data
+  ###
   createDropDown:(data = [])->
     # log "#{data.length} items in auto complete"
     @dropdownPrefix = ""
@@ -125,10 +147,14 @@ module.exports = class KDAutoCompleteController extends KDViewController
     dropdownWrapper.setClass "kdautocomplete hidden #{@getOptions().listWrapperCssClass}"
     dropdownWrapper.appendToDomBody()
 
+  ###*
+  ###
   hideDropdown:->
     dropdownWrapper = @dropdown.getView()
     dropdownWrapper.$().fadeOut 75
 
+  ###*
+  ###
   showDropdown:->
 
     return unless @readyToShowDropDown
@@ -157,6 +183,9 @@ module.exports = class KDAutoCompleteController extends KDViewController
     #   top   : mainView.getHeight()-1
 
 
+  ###*
+   * @param {Array} data
+  ###
   refreshDropDown:(data = [])->
     listView = @dropdown.getListView()
     @dropdown.removeAllItems()
@@ -184,6 +213,10 @@ module.exports = class KDAutoCompleteController extends KDViewController
     @dropdown.instantiateListItems data
     @dropdown.getListView().goDown()
 
+  ###*
+   * @param {Object} item
+   * @param {Array} data
+  ###
   submitAutoComplete:(item, data)->
     inputView = @getView()
     # log @getOptions().selectedItemsLimit, @selectedItemCounter
@@ -203,6 +236,8 @@ module.exports = class KDAutoCompleteController extends KDViewController
 
     @hideDropdown()
 
+  ###*
+  ###
   getAutoCompletedItemParent:->
     {outputWrapper} = @getOptions()
     if outputWrapper instanceof KDView
@@ -210,6 +245,9 @@ module.exports = class KDAutoCompleteController extends KDViewController
     else
       @itemWrapper = @getView()
 
+  ###*
+   * @param {Object} data
+  ###
   isItemAlreadySelected:(data)->
     {itemDataPath,customCompare,isCaseSensitive} = @getOptions()
     suggested = JsPath.getAt data, itemDataPath
@@ -226,15 +264,26 @@ module.exports = class KDAutoCompleteController extends KDViewController
           return yes
     no
 
+  ###*
+   * @param {string} name
+   * @param {Object} value
+  ###
   addHiddenInputItem:(name, value)->
     @itemWrapper.addSubView @hiddenInputs[name] = new KDInputView
       type          : "hidden"
       name          : name
       defaultValue  : value
 
+  ###*
+   * @param {string} name
+  ###
   removeHiddenInputItem:(name)->
     delete @hiddenInputs[name]
 
+  ###*
+   * @param {string} name
+   * @param {Object} data
+  ###
   addSelectedItem:(name,data)->
     {selectedItemClass} = @getOptions()
     @itemWrapper.addSubView itemView = new selectedItemClass
@@ -244,12 +293,20 @@ module.exports = class KDAutoCompleteController extends KDViewController
     ,data
     itemView.setPartial "<span class='close-icon'></span>"
 
+  ###*
+  ###
   getSelectedItemData:->
     @selectedItemData
 
+  ###*
+   * @param {Object} data
+  ###
   addSelectedItemData:(data)->
     @getSelectedItemData().push data
 
+  ###*
+   * @param {Object} data
+  ###
   removeSelectedItemData:(data)->
     selectedItemData = @getSelectedItemData()
     for selectedData,i in selectedItemData
@@ -257,6 +314,8 @@ module.exports = class KDAutoCompleteController extends KDViewController
         selectedItemData.splice i,1
         return
 
+  ###*
+  ###
   getCollectionPath:->
     {name} = @getOptions()
     throw new Error 'No name!' unless name
@@ -265,9 +324,16 @@ module.exports = class KDAutoCompleteController extends KDViewController
     path.push collectionName
     path.join('.')
 
+  ###*
+   * @param {string} title
+  ###
   addSuggestion:(title)->
     @emit 'AutocompleteSuggestionWasAdded', title
 
+  ###*
+   * @param {Object} item
+   * @param {Object} data
+  ###
   addItemToSubmitQueue:(item,data)->
     data or= item?.getData()
     return  unless data or item?.getOptions().userInput
@@ -306,6 +372,10 @@ module.exports = class KDAutoCompleteController extends KDViewController
     @addSelectedItem itemName, data
     @getView().setValue @dropdownPrefix = ""
 
+  ###*
+   * @param {Object} item
+   * @param {Object} data
+  ###
   removeFromSubmitQueue:(item, data)->
     {itemDataPath,form} = @getOptions()
     data or= item.getData()
@@ -326,10 +396,14 @@ module.exports = class KDAutoCompleteController extends KDViewController
     item.destroy()
     @emit 'ItemListChanged', @selectedItemCounter
 
+  ###*
+  ###
   appendAutoCompletedItem:->
     @getView().setValue ""
     @getView().$input().trigger "focus"
 
+  ###*
+  ###
   updateDropdownContents:->
     inputView = @getView()
     if inputView.getValue() is ""
@@ -344,6 +418,9 @@ module.exports = class KDAutoCompleteController extends KDViewController
         @refreshDropDown data
         @showDropdown()
 
+  ###*
+   * @param {Object} event
+  ###
   keyUpOnInputView:(event)->
     return if event.keyCode in [9,38,40] #tab
     @updateDropdownContents()
@@ -352,6 +429,9 @@ module.exports = class KDAutoCompleteController extends KDViewController
     no
 
   #this one I guess should be overriden
+  ###*
+   * @param {Function} callback
+  ###
   fetch:(callback)->
     args = {}
     if @getOptions().fetchInputName
@@ -363,6 +443,8 @@ module.exports = class KDAutoCompleteController extends KDViewController
     source = @getOptions().dataSource
     source args, callback
 
+  ###*
+  ###
   showFetching: ->
     {fetchingItemClass} = @getOptions()
     if @dropdown.getListView().items?[0] not instanceof KDAutoCompleteFetchingItem
@@ -372,12 +454,17 @@ module.exports = class KDAutoCompleteController extends KDViewController
       else
         @dropdown.getListView().addItemView view
 
+  ###*
+   * @param {Object} suggestion
+  ###
   getNoItemFoundView:(suggestion) ->
     {nothingFoundItemClass} = @getOptions()
     view = new nothingFoundItemClass
       delegate: @dropdown.getListView()
       userInput: suggestion or @getView().getValue()
 
+  ###*
+  ###
   showNoDataFound: ->
     noItemFoundView = @getNoItemFoundView()
     @dropdown.removeAllItems()
